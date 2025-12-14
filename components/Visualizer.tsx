@@ -3,21 +3,15 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, OrthographicCamera, Environment, Edges } from '@react-three/drei';
 import { PalletConfig, CalculationResult } from '../types';
 
-// Augment JSX namespace to satisfy TypeScript when @react-three/fiber types are missing or not picked up
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      group: any;
-      mesh: any;
-      boxGeometry: any;
-      meshStandardMaterial: any;
-      ambientLight: any;
-      directionalLight: any;
-      planeGeometry: any;
-      shadowMaterial: any;
-    }
-  }
-}
+// Bypass TypeScript intrinsic element check for React Three Fiber elements
+const Group = 'group' as any;
+const Mesh = 'mesh' as any;
+const BoxGeometry = 'boxGeometry' as any;
+const MeshStandardMaterial = 'meshStandardMaterial' as any;
+const AmbientLight = 'ambientLight' as any;
+const DirectionalLight = 'directionalLight' as any;
+const PlaneGeometry = 'planeGeometry' as any;
+const ShadowMaterial = 'shadowMaterial' as any;
 
 interface VisualizerProps {
   pallet: PalletConfig;
@@ -26,14 +20,14 @@ interface VisualizerProps {
 
 const PalletMesh: React.FC<{ config: PalletConfig }> = ({ config }) => {
   return (
-    <group position={[0, config.height / 2, 0]}>
+    <Group position={[0, config.height / 2, 0]}>
       {/* Top Deck */}
-      <mesh receiveShadow castShadow position={[0, 0, 0]}>
-        <boxGeometry args={[config.length, config.height, config.width]} />
-        <meshStandardMaterial color="#b0b0b0" /> {/* Grey Base like Image 2 */}
+      <Mesh receiveShadow castShadow position={[0, 0, 0]}>
+        <BoxGeometry args={[config.length, config.height, config.width]} />
+        <MeshStandardMaterial color="#b0b0b0" /> {/* Grey Base like Image 2 */}
         <Edges color="#666666" threshold={15} />
-      </mesh>
-    </group>
+      </Mesh>
+    </Group>
   );
 };
 
@@ -46,23 +40,23 @@ const BoxMesh: React.FC<{
   const width = position.rotation ? dims.l : dims.w;
 
   return (
-    <mesh position={[position.x, position.y, position.z]} castShadow receiveShadow>
-      <boxGeometry args={[length, dims.h, width]} />
+    <Mesh position={[position.x, position.y, position.z]} castShadow receiveShadow>
+      <BoxGeometry args={[length, dims.h, width]} />
       {/* Blue color matching the reference image */}
-      <meshStandardMaterial color="#00609c" roughness={0.4} metalness={0.1} />
+      <MeshStandardMaterial color="#00609c" roughness={0.4} metalness={0.1} />
       <Edges color="black" threshold={15} lineWidth={1} />
-    </mesh>
+    </Mesh>
   );
 };
 
 const SceneContent: React.FC<VisualizerProps> = ({ pallet, result }) => {
   return (
     <>
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[1000, 2000, 1000]} intensity={1.2} castShadow />
-      <directionalLight position={[-500, 1000, -500]} intensity={0.5} />
+      <AmbientLight intensity={0.8} />
+      <DirectionalLight position={[1000, 2000, 1000]} intensity={1.2} castShadow />
+      <DirectionalLight position={[-500, 1000, -500]} intensity={0.5} />
       
-      <group>
+      <Group>
         {/* The Pallet */}
         <PalletMesh config={pallet} />
 
@@ -76,11 +70,11 @@ const SceneContent: React.FC<VisualizerProps> = ({ pallet, result }) => {
         ))}
         
         {/* Shadow Plane */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -10, 0]} receiveShadow>
-           <planeGeometry args={[5000, 5000]} />
-           <shadowMaterial opacity={0.2} color="#000000" />
-        </mesh>
-      </group>
+        <Mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -10, 0]} receiveShadow>
+           <PlaneGeometry args={[5000, 5000]} />
+           <ShadowMaterial opacity={0.2} color="#000000" />
+        </Mesh>
+      </Group>
     </>
   );
 };
